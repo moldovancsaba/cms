@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: './.env' });
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -15,19 +15,18 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Verify if MONGO_URI is loaded
+if (!process.env.MONGO_URI) {
+    console.error("❌ MONGO_URI is not defined. Check your .env file.");
+    process.exit(1);
+}
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error(err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Text Data (for settings page)
-const texts = {
-    welcome_message: "Send a Message",
-    chat_title: "Chat Messages",
-    settings_page_title: "Settings"
-};
-
-// Render Dashboard
+// Render Admin Panel with messages
 app.get('/', async (req, res) => {
     const messages = await Message.find().sort({ createdAt: -1 });
     res.render('index', { title: 'Dashboard', messages });
@@ -35,11 +34,13 @@ app.get('/', async (req, res) => {
 
 // Render Settings Page
 app.get('/settings', (req, res) => {
-    res.render('settings', { texts });
+    res.render('settings', { texts: { welcome_message: "Send a Message", chat_title: "Chat Messages", settings_page_title: "Settings" } });
 });
 
 // API Route for messages
 app.use('/messages', messageRoutes);
 
-// Export for Vercel
-module.exports = app;
+// Start Server
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
             <ul class="navbar-nav">
@@ -17,7 +17,7 @@
             </ul>
         </nav>
 
-        <% include partials/sidebar.ejs %>
+        <% include('partials/sidebar.ejs'); %>
 
         <div class="content-wrapper">
             <section class="content">
